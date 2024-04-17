@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-clients:3.7.0'
+    implementation 'org.apache.kafka:kafka-streams:3.7.0'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+}
+
+// Shadow configuration to create a fat JAR
+shadowJar {
+    version = '1.0.0'
+    configurations = [project.configurations.implementation]
+}
+
+// Task to copy dependencies to build/libs folder
+tasks.register('copyDependencies', Copy) {
+    from configurations.runtimeClasspath
+    into "${buildDir}/libs"
+}
+
+// Add the task as a dependency to build task
+build.dependsOn copyDependencies
